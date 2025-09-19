@@ -12,3 +12,5 @@ jobs:
         MI_VARIABLE: Hola mundo v2
       run: |
         echo $MI_VARIABLE.
+    - name: cualquier nombre jobs
+      run: echo "cualquier cosa"
