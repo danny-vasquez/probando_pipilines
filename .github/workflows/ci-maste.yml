@@ -35,7 +35,6 @@ jobs:
     name: Verificar pruebas en release
     runs-on: ubuntu-latest
     needs: crear-rama-release
-    if: contains(github.event.head_commit.message, '[READY FOR RELEASE]')
     steps:
       - name: Checkout rama release
         uses: actions/checkout@v3
@@ -59,7 +58,6 @@ jobs:
     name: Merge release con main
     runs-on: ubuntu-latest
     needs: pruebas-release
-    if: contains(github.event.head_commit.message, '[READY FOR RELEASE]')
     steps:
       - name: Merge release con main
         uses: tukasz/direct-merge-action@master
