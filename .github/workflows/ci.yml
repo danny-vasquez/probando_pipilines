@@ -34,7 +34,7 @@ jobs:
       - name: Merge directo a develop
         uses: tukasz/direct-merge-action@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           source: ${{ github.ref_name }}
           target: develop
           commit-message: "Merge automático: ${{ github.ref_name }} → develop"
