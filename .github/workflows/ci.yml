@@ -1,6 +1,6 @@
 name: Cuando hace push en feature/* con commit clave, corre las pruebas y mezcla con develop
 on:
-  push::
+  push:
     branches:
       - "feature/*"
 jobs:
