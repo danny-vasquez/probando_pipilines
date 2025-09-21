@@ -32,10 +32,9 @@ jobs:
     if: contains(github.event.head_commit.message, '[FINISHED]')
     steps:
       - name: Checkout repository
-        uses: peter-evans/merge-branch@v4
+        uses: tukasz/direct-merge-action@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           source: ${{ github.ref_name }}
           target: develop
           commit-message: "Merge automático: rama ${{ github.head_ref }} → develop"
-          merge-method: merge
