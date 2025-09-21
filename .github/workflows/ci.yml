@@ -36,7 +36,7 @@ jobs:
       - name: Merge a develop
         run: |
           git fetch origin develop
-          git checkout o develop
+          git checkout develop
           git merge ${{ github.ref_name }} --no-ff -m "Merge automático desde ${{ github.ref_name }} -> develop"
           git push origin develop
         env:
