@@ -25,16 +25,32 @@ jobs:
         id: correr-pruebas-automaticas-v1
         run: python -m unittest discover -s tests -v -p "test_*.py"
 
-  job-merge-develop:
-    name: Merge automático a develop
+  job-pr-create:
+    name: Crear PR a develop
     runs-on: ubuntu-latest
     needs: job-pruebas
     if: contains(github.event.head_commit.message, '[FINISHED]')
     steps:
       - name: Checkout repository
-        uses: peter-evans/enable-pull-request-automerge@v3
+        uses: actions/checkout@v3
+
+      - name: Crear Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          source: ${{ github.ref_name }}
-          target: develop
-          commit-message: "Merge automático: rama ${{ github.head_ref }} → develop"
+          base: develop
+          branch: ${{ github.ref_name }}
+          title: "Auto PR: ${{ github.ref_name }} → develop"
+          body: "Merge automático tras pasar pruebas"
+          delete-branch: false
+
+  job-automerge:
+    name: Merge automático del PR
+    runs-on: ubuntu-latest
+    needs: job-pr-create
+    steps:
+      - name: Auto Merge
+        uses: pascalgn/automerge-action@v0.16.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
