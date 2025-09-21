@@ -1,4 +1,4 @@
-name: Crear rama rama release, correr pruebas y mezclar con main
+name: Crear rama release, correr pruebas y mezclar con main
 
 on:
   push:
@@ -15,19 +15,19 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.event.head_commit.message, '[READY FOR RELEASE]')
     outputs:
-      release-branch: ${{ steps.set-release-branch.outputs.release-branch }}
+      release_branch: ${{ steps.set-release-branch.outputs.release_branch }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Crear nombre de release
         id: set-release-branch
-        run: echo "release-branch=release-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+        run: echo "release_branch=release-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Crear y pushear rama release
         run: |
-          git checkout -b ${{ steps.set-release-branch.outputs.release-branch }}
-          git push origin ${{ steps.set-release-branch.outputs.release-branch }}
+          git checkout -b ${{ steps.set-release-branch.outputs.release_branch }}
+          git push origin ${{ steps.set-release-branch.outputs.release_branch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -40,7 +40,7 @@ jobs:
       - name: Checkout rama release
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.crear-rama-release.outputs.release-branch }}
+          ref: ${{ needs.crear-rama-release.outputs.release_branch }}
 
       - name: Configuración de Python
         uses: actions/setup-python@v4
@@ -65,6 +65,6 @@ jobs:
         uses: tukasz/direct-merge-action@master
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          source-branch: ${{ needs.crear-rama-release.outputs.release-branch }}
+          source-branch: ${{ needs.crear-rama-release.outputs.release_branch }}
           target-branch: main
-          commit-message: "Release automático: ${{ needs.crear-rama-release.outputs.release-branch }} -> main"
+          commit-message: "Release automático: ${{ needs.crear-rama-release.outputs.release_branch }} -> main"
