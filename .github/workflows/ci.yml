@@ -32,7 +32,7 @@ jobs:
     if: contains(github.event.head_commit.message, '[FINISHED]')
     steps:
       - name: Checkout repository
-        uses: tukasz/direct-merge-action@master
+        uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           source: ${{ github.ref_name }}
