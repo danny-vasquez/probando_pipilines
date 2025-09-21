@@ -1,0 +1,68 @@
+name: Crear rama release, correr pruebas y mezclar con main
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  crear-rama-release:
+    name: Crear la rama release
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[READY FOR RELEASE]')
+    outputs:
+      release_branch: ${{ steps.set-release-branch.outputs.release_branch }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Crear nombre de release
+        id: set-release-branch
+        run: echo "release_branch=release-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Crear y pushear rama release
+        run: |
+          git checkout -b ${{ steps.set-release-branch.outputs.release_branch }}
+          git push origin ${{ steps.set-release-branch.outputs.release_branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pruebas-release:
+    name: Verificar pruebas en release
+    runs-on: ubuntu-latest
+    needs: crear-rama-release
+    steps:
+      - name: Checkout rama release
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.crear-rama-release.outputs.release_branch }}
+
+      - name: Configuración de Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Correr pruebas
+        run: python -m unittest discover -s tests -v -p "test_*.py"
+
+  merge-with-main:
+    name: Merge release con main
+    runs-on: ubuntu-latest
+    needs: [crear-rama-release, pruebas-release]
+    steps:
+      - name: Merge release con main
+        uses: tukasz/direct-merge-action@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          source-branch: ${{ needs.crear-rama-release.outputs.release_branch }}
+          target-branch: main
+          commit-message: "Release automático: ${{ needs.crear-rama-release.outputs.release_branch }} -> main"
