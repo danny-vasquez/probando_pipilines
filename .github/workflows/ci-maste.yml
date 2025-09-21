@@ -1,4 +1,4 @@
-name: Crear rama Release, correr pruebas y merge a master
+name: Crear rama rama release, correr pruebas y mezclar con main
 
 on:
   push:
@@ -55,16 +55,16 @@ jobs:
       - name: Correr pruebas
         run: python -m unittest discover -s tests -v -p "test_*.py"
 
-  merge-master:
-    name: Merge release → master
+  merge-with-main:
+    name: Merge release con main
     runs-on: ubuntu-latest
     needs: pruebas-release
     if: contains(github.event.head_commit.message, '[READY FOR RELEASE]')
     steps:
-      - name: Merge directo a master
+      - name: Merge release con main
         uses: tukasz/direct-merge-action@master
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           source-branch: ${{ needs.crear-rama-release.outputs.release-branch }}
-          target-branch: master
-          commit-message: "Release automático: ${{ needs.crear-rama-release.outputs.release-branch }} → master"
+          target-branch: main
+          commit-message: "Release automático: ${{ needs.crear-rama-release.outputs.release-branch }} -> main"
