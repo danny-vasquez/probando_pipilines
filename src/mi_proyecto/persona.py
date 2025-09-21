@@ -11,13 +11,13 @@ class Persona:
        self.__edad = edad
 
    def asignar_nombre(self, nombre):
-       self.__nombre = nombre
+       self.__nombre = nombre 
 
    def dar_edad(self):
-       return(self.__edad)
+       return(self.__edad) 
 
    def dar_nombre(self):
-       return(self.__nombre)
+       return(self.__nombre) 
 
    def calcular_anio_nacimiento(self, ya_cumplio_anios):
        anio_actual = datetime.datetime.now().year
